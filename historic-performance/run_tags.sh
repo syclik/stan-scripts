@@ -27,7 +27,7 @@ setup_stan() {
   mkdir -p ~/dev/stan/src/test/test-models/performance
   cp src/logistic.data.R ~/dev/stan/src/test/test-models/performance/
   cp src/logistic.stan ~/dev/stan/src/test/test-models/performance/
-  cp src/runTests.py ~/dev/stan
+#  cp src/runTests.py ~/dev/stan
   mkdir -p ~/dev/stan/test/performance
   cp performance.csv ~/dev/stan/test/performance/performance.csv
 }
@@ -37,7 +37,8 @@ run_test_with_lib() {
 
   make bin/libstan.a
   make src/test/test-models/performance/logistic.hpp
-  ./runTests.py src/test/performance/logistic_test.cpp
+  make test/performance/logistic
+  ./test/performance/logistic
 
   popd
   
@@ -48,7 +49,8 @@ run_test_without_lib() {
   pushd ~/dev/stan
 
   make src/test/test-models/performance/logistic.hpp
-  ./runTests.py src/test/performance/logistic_test.cpp
+  make test/performance/logistic
+  ./test/performance/logistic
 
   popd
   
