@@ -28,8 +28,8 @@ setup_stan() {
   cp src/logistic.data.R ~/dev/stan/src/test/test-models/performance/
   cp src/logistic.stan ~/dev/stan/src/test/test-models/performance/
   cp src/runTests.py ~/dev/stan
-  mkdir -p ~/dev/stan/src/test/performance
-  cp performance.csv ~/dev/stan/src/test/performance/performance.csv
+  mkdir -p ~/dev/stan/test/performance
+  cp performance.csv ~/dev/stan/test/performance/performance.csv
 }
 
 run_test_with_lib() {
