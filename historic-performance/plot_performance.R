@@ -1,10 +1,10 @@
-performance <- read.csv('performance-jenkins-2.5.csv')
+performance <- read.csv('performance.csv')
 
-runs <- performance[,5:104]
+runs <- performance[,7:106]
 
 x <- 1:nrow(performance)
 xlim <- c(1, nrow(performance)) + c(-0.5, 0.5)
-ylim <- c(0, ceiling(max(runs)/1000) * 1000)
+ylim <- c(0, ceiling(max(runs)))
 
 performance$mean <- apply(runs, 1, mean)
 performance$min <- apply(runs, 1, min)
@@ -20,14 +20,14 @@ col_index <- ifelse(performance$matches.tagged.version == "yes" &
 
 cols <- rbind(c('gray', 'black'), c('red4', 'red'))
 
-pdf('performance-jenkins-2.5.pdf')
+pdf('performance.pdf')
 par(mar = c(6, 4, 2, 0.5))
 plot(NA,
      xlim=xlim, ylim=ylim,
      xaxs="i", yaxs="i",
      bty="l",
      main="logistic regression",
-     xlab="", ylab="time (ms)",
+     xlab="", ylab="time (s)",
      type="n", xaxt="n")
 axis(1, at=x,
      labels=FALSE)
