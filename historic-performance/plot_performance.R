@@ -32,7 +32,7 @@ plot(NA,
      type="n", xaxt="n")
 axis(1, at=x,
      labels=FALSE)
-text(x=x, y=-150, labels = label, srt=60,
+text(x=x, y=-.15, labels = label, srt=60,
      xpd=TRUE, cex=0.5, adj=1)
 
 points(x, performance$mean, col=cols[col_index, 2])
