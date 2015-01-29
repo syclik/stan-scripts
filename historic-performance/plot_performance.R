@@ -1,4 +1,4 @@
-performance <- read.csv('performance.csv')
+performance <- read.csv("performance.csv")
 
 runs <- performance[,7:106]
 
@@ -13,14 +13,15 @@ performance$lo_25 <- apply(runs, 1, quantile, 0.25)
 performance$hi_75 <- apply(runs, 1, quantile, 0.75)
 
 label <- paste(substr(performance$git.hash, 1, 7),
-               ' ',
-               format(as.Date(performance$git.date), '%m-%d-%Y'))
+               " ",
+               format(as.Date(performance$git.date, format="%a %b %d %H:%M:%S %Y"),
+                      "%m-%d-%Y"))
 col_index <- ifelse(performance$matches.tagged.version == "yes" &
                     performance$all.values.same == "yes", 1, 2)
 
-cols <- rbind(c('gray', 'black'), c('red4', 'red'))
+cols <- rbind(c("gray", "black"), c("red4", "red"))
 
-pdf('performance.pdf')
+pdf("performance.pdf")
 par(mar = c(6, 4, 2, 0.5))
 plot(NA,
      xlim=xlim, ylim=ylim,
