@@ -78,7 +78,6 @@ if [[ $(read_patch_version) -ne $(patch_version $old_version) ]]; then
   exit 1
 fi
 
-
 ## reading new Stan version
 tag_current_step="Reading new Stan version"
 if [[ -z $version ]]; then
@@ -100,19 +99,55 @@ fi
 ## 1. $stan_home should be clean and
 ##    up to date
 ########################################
-tag_current_step="Checking $stan_home"
+# tag_current_step="Checking $stan_home"
+# pushd $stan_directory > /dev/null
+
+# if [[ -n $(git status --porcelain) ]]; then
+#   tag_current_step="$stan_home is not clean!
+#     Verify the directory passes \"git status --porcelain\""
+#   exit 1
+# fi
+
+# git checkout develop
+# git pull --ff
+
+# popd > /dev/null
+
+########################################
+## 2. git branch to release/v$version
+########################################
+tag_current_step="Creating release/v$version branch"
 pushd $stan_directory > /dev/null
 
-if [[ -n $(git status --porcelain) ]]; then
-  tag_current_step="$stan_home is not clean!
-    Verify the directory passes \"git status --porcelain\""
+git checkout -b release/v$version
+
+popd > /dev/null
+
+
+
+########################################
+## 3. Update version numbers
+########################################
+tag_current_step="Updating version numbers"
+pushd $stan_directory > /dev/null
+
+## src/stan/version.hpp
+tag_current_step="Updating version numbers: $stan_directory/src/stan/version.hpp"
+replace_major_version $version
+replace_minor_version $version
+replace_patch_version $version
+if [[ $(read_major_version) != $(major_version $version) \
+    || $(read_minor_version) != $(minor_version $version) \
+    || $(read_patch_version) != $(patch_version $version) ]]; then
+  tag_current_step="Updating version numbers failed!
+    Check $stan_directory/src/stan/version.hpp"
   exit 1
 fi
 
-git checkout develop
-git pull --ff
+replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" $stan_directory/src)
 
 popd > /dev/null
+
 
 
 
