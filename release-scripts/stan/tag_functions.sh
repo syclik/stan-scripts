@@ -1,64 +1,143 @@
 #!/bin/bash
 
 ## pretty printing for when the shell aborts
-## script uses: $tag_current_step
+## script uses: $_msg, $_steps, and $_step
 abort() {
   echo "
 ********************
-An error occurred:
+An error occurred.
 
-  $tag_current_step
+Step $_step: ${_steps[$_step]}
+
+  $_msg
 
 Exiting without tagging." >&2
 
   exit 1
 }
 
+## pretty printing of the current step
+print_step() {
+  _step=$1
+  echo "------------------------------------"
+  echo "Step "$_step: ${_steps[$_step]}
+  echo 
+}
+
+## read major version from the Stan directory
 read_major_version() {
   sed -e 's/^.*MAJOR_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
 }
 
+## read minor version from the Stan directory
 read_minor_version() {
   sed -e 's/^.*MINOR_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
 }
 
+## read patch version from the Stan directory
 read_patch_version() {
   sed -e 's/^.*PATCH_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
 }
 
-
-
+## check the version number: currently verifies there are two periods
 check_version() {
   [[ $(grep -o "\." <<<$1 | wc -l) -eq 2 ]]
 }
 
+## reads the major version from a x.y.z version
 major_version() {
   sed 's/\(.*\)\.\(.*\)\.\(.*\)/\1/' <<<$1
 }
 
+## reads the minor version from a x.y.z version
 minor_version() {
   sed 's/\(.*\)\.\(.*\)\.\(.*\)/\2/' <<<$1
 }
 
+## reads the patch version from a x.y.z version
 patch_version() {
   sed 's/\(.*\)\.\(.*\)\.\(.*\)/\3/' <<<$1
 }
 
+## replaces the major version in the Stan directory
 replace_major_version() {
   sed -i '' "s/\(^.*MAJOR_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(major_version $1)\3/g" $stan_directory/src/stan/version.hpp 
 }
 
+## replaces the minor version in the Stan directory
 replace_minor_version() {
   sed -i '' "s/\(^.*MINOR_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(minor_version $1)\3/g" $stan_directory/src/stan/version.hpp 
 }
 
+## replaces the patch version in the Stan directory
 replace_patch_version() {
   sed -i '' "s/\(^.*PATCH_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(patch_version $1)\3/g" $stan_directory/src/stan/version.hpp 
 }
 
+## replaces the version in all source files in the Stan directory
 replace_version() {
   for file in "$@"
   do
     sed -i '' "s/$(major_version $old_version)\.$(minor_version $old_version)\.$(patch_version $old_version)/$(major_version $version)\.$(minor_version $version)\.$(patch_version $version)/g" $file
   done
+}
+
+
+## checks the header code for a 201.
+curl_success() {
+  code=$(sed -n "s,.*HTTP/1.1 \([0-9]\{3\}\).*,\1,p" <<< "$1")
+  [[ "$code" -eq "201" ]]
+}
+
+
+## parses the pull request number
+parse_pull_request_number() {
+  pull_request_number=$(sed -n "s,.*\"number\":[[:space:]]*\([0-9]*\).*,\1,p" <<< "$1")
+}
+
+
+## creates a pull request
+##   uses
+##     $github_user
+##     $github_password
+##     $tag_github_api_url
+##   arguments
+##     $1: title
+##     $2: head
+##     $3: base
+##     $4: body
+create_pull_request() {
+  data="{
+  \"title\": \"$1\",
+  \"head\": \"$2\",
+  \"base\": \"$3\",
+  \"body\": \"$4\" }"
+
+  response=$(eval curl --include --user \"$github_user:$github_password\" --request POST --data \'$data\' $tag_github_api_url/pulls)
+
+  if ! curl_success "${response}"; then
+    _msg="
+Error creating pull request:
+----------------------------
+$data
+
+
+Response:
+---------
+$response
+"
+    exit 1
+  fi
+
+
+  parse_pull_request_number "${response}"
+}
+
+
+merge_pull_request() {
+  echo $tag_github_api_url/pulls/$1/merge
+  data="{ \"commit_message\": \"$2\" }"
+  echo $data
+
+#  eval curl --user \"$github_user:$github_password\" --request PUT --data \'$data\' $tag_github_api_url/pulls/$1/merge
 }
