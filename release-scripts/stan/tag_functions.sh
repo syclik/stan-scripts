@@ -86,13 +86,13 @@ replace_version() {
 ## checks the header code for a 201.
 curl_success() {
   code=$(sed -n "s,.*HTTP/1.1 \([0-9]\{3\}\).*,\1,p" <<< "$1")
-  [[ "$code" -eq "201" ]]
+  [[ "$code" -eq "201" ]] || [ "$code" -eq "200" ]
 }
 
 
 ## parses the pull request number
-parse_pull_request_number() {
-  pull_request_number=$(sed -n "s,.*\"number\":[[:space:]]*\([0-9]*\).*,\1,p" <<< "$1")
+parse_github_number() {
+  github_number=$(sed -n "s,.*\"number\":[[:space:]]*\([0-9]*\).*,\1,p" <<< "$1")
 }
 
 
@@ -129,15 +129,68 @@ $response
     exit 1
   fi
 
-
-  parse_pull_request_number "${response}"
+  parse_github_number "${response}"
 }
 
-
+## merges a pull request
+## uses
+##  $github_user
+##  $github_password
+##  $tag_github_api_url
+##
+## arguments
+##  $1: pull request number
+##  $2: commit message for the merge
 merge_pull_request() {
   echo $tag_github_api_url/pulls/$1/merge
   data="{ \"commit_message\": \"$2\" }"
   echo $data
 
-#  eval curl --user \"$github_user:$github_password\" --request PUT --data \'$data\' $tag_github_api_url/pulls/$1/merge
+  response=$(eval curl -i --user \"$github_user:$github_password\" --request PUT --data \'$data\' $tag_github_api_url/pulls/$1/merge)
+
+  if ! curl_success "${response}"; then
+    _msg="
+Error merging pull request:
+----------------------------
+$data
+
+Response:
+---------
+$response
+"
+    exit 1
+  fi
+}
+
+
+## creates a pull request
+##   uses
+##     $github_user
+##     $github_password
+##     $tag_github_api_url
+##   arguments
+##     $1: title
+##     $2: body
+create_issue() {
+  data="{
+  \"title\": \"$1\",
+  \"body\": \"$2\" }"
+
+  response=$(eval curl --include --user \"$github_user:$github_password\" --request POST --data \'$data\' $tag_github_api_url/issues)
+
+  if ! curl_success "${response}"; then
+    _msg="
+Error creating issue
+----------------------------
+$data
+
+
+Response:
+---------
+$response
+"
+    exit 1
+  fi
+
+  parse_github_number "${response}"
 }
