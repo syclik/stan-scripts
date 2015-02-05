@@ -39,6 +39,10 @@ read_patch_version() {
   sed -e 's/^.*PATCH_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
 }
 
+read_cmdstan_version() {
+  sed -e 's/^.*{\\cmdstanversion}{\(.*\)}/\1/p' -n $cmdstan_directory/src/docs/cmdstan-guide/cmdstan-guide.tex
+}
+
 ## check the version number: currently verifies there are two periods
 check_version() {
   [[ $(grep -o "\." <<<$1 | wc -l) -eq 2 ]]
