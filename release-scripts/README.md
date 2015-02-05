@@ -40,3 +40,11 @@ Non-interactive will require the user to specify these variables.
 15. git remove built documentation; git commit
 16. git push
 17. create pull request
+
+
+## To do after this is done
+
+1. Make sure all closed issues that have no tag, tagged future, etc. are tagged as v2.6.0
+2. Close milestone.
+3. Create a GitHub release.
+
