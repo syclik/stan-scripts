@@ -194,3 +194,11 @@ $response
 
   parse_github_number "${response}"
 }
+
+
+wait_for_input() {
+  input=
+  until [ "$input" = "y" ]; do 
+    read -p "$1 (Press 'y' to continue): " input
+  done
+}

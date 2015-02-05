@@ -116,16 +116,16 @@ if [[ -z $version ]]; then
   read -p "  New Stan version (old version: $old_version): " version
 fi
 
-# _msg="Verifying new Stan version"
-# if ! check_version $version; then
-#   _msg="Invalid new version: \"$version\""
-#   exit 1
-# fi
-# if [[ $old_version == $version ]]; then
-#   _msg="Invalid new version!
-#     Trying to tag the same version: \"$version\""
-#   exit 1
-# fi
+_msg="Verifying new Stan version"
+if ! check_version $version; then
+  _msg="Invalid new version: \"$version\""
+  exit 1
+fi
+if [[ $old_version == $version ]]; then
+  _msg="Invalid new version!
+    Trying to tag the same version: \"$version\""
+  exit 1
+fi
 
 ## read GitHub user name
 _msg="Reading GitHub user name"
@@ -144,109 +144,109 @@ echo
 ## 1. Verify $stan_home is clean and
 ##    up to date
 ########################################
-# print_step 1
-# _msg="Checking $stan_home"
-# pushd $stan_directory > /dev/null
+print_step 1
+_msg="Checking $stan_home"
+pushd $stan_directory > /dev/null
 
-# if [[ -n $(git status --porcelain) ]]; then
-#   _msg="$stan_home is not clean!
-#     Verify the directory passes \"git status --porcelain\""
-#   exit 1
-# fi
+if [[ -n $(git status --porcelain) ]]; then
+  _msg="$stan_home is not clean!
+    Verify the directory passes \"git status --porcelain\""
+  exit 1
+fi
 
-# git checkout develop
-# git pull --ff
+git checkout develop
+git pull --ff
 
-# popd > /dev/null
-
-
-# ########################################
-# ## 2. Create release branch using git.
-# ##    release/v$version
-# ########################################
-# print_step 2
-# _msg="Creating release/v$version branch"
-# pushd $stan_directory > /dev/null
-
-# git checkout -b release/v$version
-
-# popd > /dev/null
+popd > /dev/null
 
 
-# ########################################
-# ## 3. Update version numbers
-# ########################################
-# print_step 3
-# _msg="Updating version numbers"
-# pushd $stan_directory > /dev/null
+########################################
+## 2. Create release branch using git.
+##    release/v$version
+########################################
+print_step 2
+_msg="Creating release/v$version branch"
+pushd $stan_directory > /dev/null
 
-# ## src/stan/version.hpp
-# _msg="Updating version numbers: $stan_directory/src/stan/version.hpp"
-# replace_major_version $version
-# replace_minor_version $version
-# replace_patch_version $version
-# if [[ $(read_major_version) != $(major_version $version) \
-#     || $(read_minor_version) != $(minor_version $version) \
-#     || $(read_patch_version) != $(patch_version $version) ]]; then
-#   _msg="Updating version numbers failed!
-#     Check $stan_directory/src/stan/version.hpp"
-#   exit 1
-# fi
+git checkout -b release/v$version
 
-# replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" $stan_directory/src)
-
-# popd > /dev/null
+popd > /dev/null
 
 
-# ########################################
-# ## 4. Git add and commit changed files
-# ########################################
-# print_step 4
-# _msg="Committing changed files to local git repository"
-# pushd $stan_directory > /dev/null
+########################################
+## 3. Update version numbers
+########################################
+print_step 3
+_msg="Updating version numbers"
+pushd $stan_directory > /dev/null
+
+## src/stan/version.hpp
+_msg="Updating version numbers: $stan_directory/src/stan/version.hpp"
+replace_major_version $version
+replace_minor_version $version
+replace_patch_version $version
+if [[ $(read_major_version) != $(major_version $version) \
+    || $(read_minor_version) != $(minor_version $version) \
+    || $(read_patch_version) != $(patch_version $version) ]]; then
+  _msg="Updating version numbers failed!
+    Check $stan_directory/src/stan/version.hpp"
+  exit 1
+fi
+
+replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" $stan_directory/src)
+
+popd > /dev/null
 
 
-# git commit -m "release/v$version: updating version numbers" -a
-
-# popd > /dev/null
-
-
-# ########################################
-# ## 5. Build documentation
-# ########################################
-# print_step 5
-# _msg="Building documentation"
-# pushd $stan_directory > /dev/null
-
-# make manual doxygen > /dev/null
-
-# popd > /dev/null
+########################################
+## 4. Git add and commit changed files
+########################################
+print_step 4
+_msg="Committing changed files to local git repository"
+pushd $stan_directory > /dev/null
 
 
-# ########################################
-# ## 6. Git add and commit built documentation
-# ########################################
-# print_step 6
-# _msg="Committing built documentation"
-# pushd $stan_directory > /dev/null
+git commit -m "release/v$version: updating version numbers" -a
 
-# git add -f doc
-# git commit -m "release/v$version: adding built documentation"
-
-# popd > /dev/null
+popd > /dev/null
 
 
-# ########################################
-# ## 7. Final test. Git push
-# ########################################
-# print_step 7
-# _msg="Pushing changes to github"
-# pushd $stan_directory > /dev/null
+########################################
+## 5. Build documentation
+########################################
+print_step 5
+_msg="Building documentation"
+pushd $stan_directory > /dev/null
 
-# ### FIXME: Add testing code here
-# git push origin release/v$version
+make manual doxygen > /dev/null
 
-# popd > /dev/null
+popd > /dev/null
+
+
+########################################
+## 6. Git add and commit built documentation
+########################################
+print_step 6
+_msg="Committing built documentation"
+pushd $stan_directory > /dev/null
+
+git add -f doc
+git commit -m "release/v$version: adding built documentation"
+
+popd > /dev/null
+
+
+########################################
+## 7. Final test. Git push
+########################################
+print_step 7
+_msg="Pushing changes to github"
+pushd $stan_directory > /dev/null
+
+### FIXME: Add testing code here
+git push origin release/v$version
+
+popd > /dev/null
 
 
 
@@ -256,6 +256,9 @@ echo
 print_step 8
 _msg="Create github pull request for $version"
 pushd $stan_directory > /dev/null
+
+
+wait_for_input "Creating the pull request "
 
 create_pull_request "release/v$version" "release/v$version" "develop" "\[skip ci\]\n\n#### Summary:\n\nUpdates version numbers to v$version.\n\n#### Intended Effect:\n\nThe \`develop\` branch should be tagged as \`v$version\` after this is merged.\n\n#### How to Verify:\n\nInspect the code.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nDocumentation is included.\n\n#### Reviewer Suggestions: \n\nNone."
 
@@ -268,6 +271,8 @@ popd > /dev/null
 print_step 9
 _msg="Merging pull request $github_number"
 pushd $stan_directory > /dev/null
+
+wait_for_input "Merging the pull request "
 
 merge_pull_request $github_number "release/v$version"
 git checkout develop
@@ -295,6 +300,8 @@ popd > /dev/null
 print_step 11
 _msg="Updating master to tag v$version"
 pushd $stan_directory > /dev/null
+
+wait_for_input "Updating master to v$version"
 
 git checkout master
 git reset --hard v2.6.0
