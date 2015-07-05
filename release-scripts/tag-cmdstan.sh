@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. tag_functions.sh
+. functions.sh
 
 trap 'abort' 0
 
