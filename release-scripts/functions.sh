@@ -39,6 +39,22 @@ read_stan_patch_version() {
   sed -e 's/^.*STAN_PATCH[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $stan_directory/src/stan/version.hpp
 }
 
+## read major version from the Stan directory
+read_math_major_version() {
+  sed -e 's/^.*STAN_MATH_MAJOR[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $math_directory/stan/math/version.hpp
+}
+
+## read minor version from the Stan directory
+read_math_minor_version() {
+  sed -e 's/^.*STAN_MATH_MINOR[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $math_directory/stan/math/version.hpp
+}
+
+## read patch version from the Stan directory
+read_math_patch_version() {
+  sed -e 's/^.*STAN_MATH_PATCH[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $math_directory/stan/math/version.hpp
+}
+
+
 read_cmdstan_version() {
   sed -e 's/^.*{\\cmdstanversion}{\(.*\)}/\1/p' -n $cmdstan_directory/src/docs/cmdstan-guide/cmdstan-guide.tex
 }
@@ -75,7 +91,22 @@ replace_stan_minor_version() {
 
 ## replaces the patch version in the Stan directory
 replace_stan_patch_version() {
-  sed -i '' "s/\(^.*PATCH_VERSION[[:space:]]*\)\([[:alnum:]]*\)/\1$(patch_version $1)/g" $stan_directory/src/stan/version.hpp 
+  sed -i '' "s/\(^.*STAN_PATCH[[:space:]]*\)\([[:alnum:]]*\)/\1$(patch_version $1)/g" $stan_directory/src/stan/version.hpp 
+}
+
+## replaces the major version in the Stan directory
+replace_math_major_version() {
+  sed -i '' "s/\(^.*STAN_MATH_MAJOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(major_version $1)/g" $stan_directory/src/stan/version.hpp 
+}
+
+## replaces the minor version in the Stan directory
+replace_math_minor_version() {
+  sed -i '' "s/\(^.*STAN_MATH_MINOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(minor_version $1)/g" $stan_directory/src/stan/version.hpp 
+}
+
+## replaces the patch version in the Stan directory
+replace_math_patch_version() {
+  sed -i '' "s/\(^.*STAN_MATH_PATCH[[:space:]]*\)\([[:alnum:]]*\)/\1$(patch_version $1)/g" $stan_directory/src/stan/version.hpp 
 }
 
 ## replaces the version in all source files in the Stan directory
