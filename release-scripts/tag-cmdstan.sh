@@ -369,6 +369,12 @@ merge_pull_request $github_number "feature/issue-$github_number-remove-documenta
 
 popd > /dev/null
 
+
+
+########################################
+## Done
+########################################
+
 trap : 0 
 
 
