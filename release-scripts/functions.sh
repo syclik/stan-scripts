@@ -25,18 +25,18 @@ print_step() {
 }
 
 ## read major version from the Stan directory
-read_major_version() {
-  sed -e 's/^.*MAJOR_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
+read_stan_major_version() {
+  sed -e 's/^.*STAN_MAJOR[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $stan_directory/src/stan/version.hpp
 }
 
 ## read minor version from the Stan directory
-read_minor_version() {
-  sed -e 's/^.*MINOR_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
+read_stan_minor_version() {
+  sed -e 's/^.*STAN_MINOR[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $stan_directory/src/stan/version.hpp
 }
 
 ## read patch version from the Stan directory
-read_patch_version() {
-  sed -e 's/^.*PATCH_VERSION[[:space:]]*=[[:space:]]*\"\(.*\)\".*/\1/p' -n $stan_directory/src/stan/version.hpp 
+read_stan_patch_version() {
+  sed -e 's/^.*STAN_PATCH[[:space:]]*\([[:alnum:]]*\).*/\1/p' -n $stan_directory/src/stan/version.hpp
 }
 
 read_cmdstan_version() {
@@ -64,18 +64,18 @@ patch_version() {
 }
 
 ## replaces the major version in the Stan directory
-replace_major_version() {
-  sed -i '' "s/\(^.*MAJOR_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(major_version $1)\3/g" $stan_directory/src/stan/version.hpp 
+replace_stan_major_version() {
+  sed -i '' "s/\(^.*STAN_MAJOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(major_version $1)/g" $stan_directory/src/stan/version.hpp 
 }
 
 ## replaces the minor version in the Stan directory
-replace_minor_version() {
-  sed -i '' "s/\(^.*MINOR_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(minor_version $1)\3/g" $stan_directory/src/stan/version.hpp 
+replace_stan_minor_version() {
+  sed -i '' "s/\(^.*STAN_MINOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(minor_version $1)/g" $stan_directory/src/stan/version.hpp 
 }
 
 ## replaces the patch version in the Stan directory
-replace_patch_version() {
-  sed -i '' "s/\(^.*PATCH_VERSION[[:space:]]*=[[:space:]]*\"\)\(.*\)\(\"\)/\1$(patch_version $1)\3/g" $stan_directory/src/stan/version.hpp 
+replace_stan_patch_version() {
+  sed -i '' "s/\(^.*PATCH_VERSION[[:space:]]*\)\([[:alnum:]]*\)/\1$(patch_version $1)/g" $stan_directory/src/stan/version.hpp 
 }
 
 ## replaces the version in all source files in the Stan directory
