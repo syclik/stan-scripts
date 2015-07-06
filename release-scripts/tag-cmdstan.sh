@@ -185,7 +185,7 @@ _msg="Updating Stan to tag v$stan_version."
 pushd $cmdstan_directory > /dev/null
 
 git submodule init
-git submodule update --recursive --depth 1
+git submodule update --recursive
 
 pushd stan > /dev/null
 
