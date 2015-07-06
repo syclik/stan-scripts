@@ -67,7 +67,7 @@ _msg="Validating CmdStan directory: $cmdstan_directory"
 if [[ ! -d $cmdstan_directory ]]; then
   _msg="Cloning CmdStan into $cmdstan_directory"
   echo ""
-  eval "git clone --depth 1 $tag_github_url $cmdstan_directory"
+  eval "git clone $tag_github_url $cmdstan_directory"
   echo ""
 fi
 

@@ -64,7 +64,7 @@ _msg="Validating Stan Math Library directory: $math_directory"
 if [[ ! -d $math_directory ]]; then
   _msg="Cloning Stan Math Library into $math_directory"
   echo ""
-  eval "git clone --depth 1 $tag_github_url $math_directory"
+  eval "git clone $tag_github_url $math_directory"
   echo ""
 fi
 
