@@ -181,7 +181,7 @@ _msg="Updating version numbers"
 pushd $math_directory > /dev/null
 
 ## stan/math/version.hpp
-_msg="Updating version numbers: $math_directory/stan/math/version.hpp"
+_msg="Updating version numbers: ${math_directory}/stan/math/version.hpp"
 replace_math_major_version $version
 replace_math_minor_version $version
 replace_math_patch_version $version
@@ -189,11 +189,11 @@ if [[ $(read_math_major_version) != $(major_version $version) \
     || $(read_math_minor_version) != $(minor_version $version) \
     || $(read_math_patch_version) != $(patch_version $version) ]]; then
   _msg="Updating version numbers failed!
-    Check $math_directory/stan/math/version.hpp"
+    Check ${math_directory}/stan/math/version.hpp"
   exit 1
 fi
 
-replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" $math_directory/stan)
+replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" ${math_directory}/stan)
 
 popd > /dev/null
 
