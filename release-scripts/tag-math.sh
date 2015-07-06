@@ -36,7 +36,7 @@ _steps[14]="Create GitHub pull request to remove documentation."
 _steps[15]="Merge GitHub pull request to remove documentation."
 
 echo ""
-echo "---------- Script to Tag Stan ----------"
+echo "---------- Script to Tag Stan Math Library ----------"
 echo ""
 echo "  Steps in this script:"
 for ((n = 0; n < ${#_steps[@]}; n++))
