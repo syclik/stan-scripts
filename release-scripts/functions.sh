@@ -81,7 +81,7 @@ patch_version() {
 
 ## replaces the major version in the Stan directory
 replace_stan_major_version() {
-  sed -i '' "s/\(^.*STAN_MAJOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(major_version $1)/g" $stan_directory/src/stan/version.hpp 
+  sed -i '' "s/\(^.*#define STAN_MAJOR[[:space:]]*\)\([[:alnum:]]*\).*/\1$(major_version $1)/g" $stan_directory/src/stan/version.hpp 
 }
 
 ## replaces the minor version in the Stan directory
