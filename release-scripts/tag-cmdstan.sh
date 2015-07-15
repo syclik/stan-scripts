@@ -67,7 +67,7 @@ _msg="Validating CmdStan directory: $cmdstan_directory"
 if [[ ! -d $cmdstan_directory ]]; then
   _msg="Cloning CmdStan into $cmdstan_directory"
   echo ""
-  eval "git clone $tag_github_url $cmdstan_directory"
+  eval "git clone --recursive $tag_github_url $cmdstan_directory"
   echo ""
 fi
 
@@ -194,7 +194,7 @@ git checkout v$stan_version
 popd > /dev/null
 
 git add stan
-git commit -m "Updating Stan to tagged v$version"
+git commit -m "Updating Stan to tagged v$version"  || echo "Stan already at v$stan_version"
 
 popd > /dev/null
 
