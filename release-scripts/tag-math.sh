@@ -194,6 +194,7 @@ if [[ $(read_math_major_version) != $(major_version $version) \
 fi
 
 replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" ${math_directory}/stan)
+replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" ${math_directory}/doxygen)
 
 popd > /dev/null
 
