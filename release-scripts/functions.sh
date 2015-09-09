@@ -117,6 +117,15 @@ replace_version() {
   done
 }
 
+replace_version_test() {
+  sed -i '' "s/\(^.*EXPECT_EQ(\)\(.*\)\(, STAN_MAJOR);.*\)/\1$(major_version $version)\3/g" src/test/unit/version_test.cpp
+  sed -i '' "s/\(^.*EXPECT_EQ(\)\(.*\)\(, STAN_MINOR);.*\)/\1$(minor_version $version)\3/g" src/test/unit/version_test.cpp
+  sed -i '' "s/\(^.*EXPECT_EQ(\)\(.*\)\(, STAN_PATCH);.*\)/\1$(patch_version $version)\3/g" src/test/unit/version_test.cpp
+  sed -i '' "s/\(^.*EXPECT_EQ(\"\)\(.*\)\(\", stan::MAJOR_VERSION);.*\)/\1$(major_version $version)\3/g" src/test/unit/version_test.cpp
+  sed -i '' "s/\(^.*EXPECT_EQ(\"\)\(.*\)\(\", stan::MINOR_VERSION);.*\)/\1$(minor_version $version)\3/g" src/test/unit/version_test.cpp
+  sed -i '' "s/\(^.*EXPECT_EQ(\"\)\(.*\)\(\", stan::PATCH_VERSION);.*\)/\1$(patch_version $version)\3/g" src/test/unit/version_test.cpp  
+}
+
 
 ## checks the header code for a 201.
 curl_success() {
