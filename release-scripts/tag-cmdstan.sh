@@ -184,16 +184,34 @@ print_step 3
 _msg="Updating Stan to tag v$stan_version."
 pushd $cmdstan_directory > /dev/null
 
+old_stan_dir=stan
+if [[ $old_stan_dir != stan_$stan_version ]]; then
+  git mv $old_stan_dir stan_$stan_version
+  sed -i '' 's|STAN ?=\(.*\)'$old_stan_dir'|STAN ?=\1stan_'$stan_version'|g' makefile  
+  git add makefile
+  git commit -m "moving stan to stan_$stan_version"
+fi
+
+## update submodules after git mv due to submodule issue
 git submodule init
 git submodule update --recursive
 
-pushd stan > /dev/null
+pushd stan_$stan_version > /dev/null
 
 git checkout v$stan_version
 
 popd > /dev/null
 
-git add stan
+math_version=$(grep stan_math stan_$stan_version/makefile | sed 's|\(.*\)stan_math\(.*\)/|\2|g')
+sed -i '' 's|MATH ?=\(.*\)stan_math/|MATH ?=\1stan_math'$math_version'/|g' makefile
+git add makefile
+git commit -m "Updating stan math location"
+
+## update references for src/docs
+sed -i '' 's|\(.*\)../'$old_stan_dir'/\(.*\)|\1../stan_'$stan_version'/\2|g' $(grep -rl "../stan/" src/docs --include \*.tex)
+git add src/docs
+
+git add stan_$stan_version
 git commit -m "Updating Stan to tagged v$version"  || echo "Stan already at v$stan_version"
 
 popd > /dev/null
@@ -214,7 +232,7 @@ popd > /dev/null
 
 ########################################
 ## 5. Build documentation
-########################################
+########################################0
 print_step 5
 _msg="Building documentation"
 pushd $cmdstan_directory > /dev/null
@@ -320,12 +338,13 @@ popd > /dev/null
 
 ########################################
 ## 12. Create GitHub issue to remove documentation
+##     and move stan version
 ########################################
 print_step 12
-_msg="Create github issue for removing v$version documentation"
+_msg="Create github issue for removing v$version documentation and move stan version"
 pushd $cmdstan_directory > /dev/null
 
-create_issue "Remove v$version documentation" "Remove build documentation from repository."
+create_issue "Remove v$version documentation and move stan library" "Remove build documentation from repository and move stan library back to ./stan/."
 
 popd > /dev/null
 
@@ -334,14 +353,40 @@ popd > /dev/null
 ##     remove and commit.
 ########################################
 print_step 13
-_msg="Creating branch to remove documentation"
+_msg="Creating branch to remove documentation and move stan math"
 pushd $cmdstan_directory > /dev/null
 
 git checkout develop
-git checkout -b feature/issue-$github_number-remove-documentation
+git pull --ff
+git checkout -b feature/issue-$github_number-remove-documentation-move-stan
 git rm -rf doc
-git commit -m "fixes #$github_number. Removing built documentation"
-git push origin feature/issue-$github_number-remove-documentation
+git commit -m "Removing built documentation"
+
+## move back stan version and change makefile
+rm -rf stan_$stan_version
+git checkout -- stan_$stan_version
+git mv stan_$stan_version $old_stan_dir 
+sed -i '' 's|STAN ?=\(.*\)stan_'$stan_version'\(.*\)|STAN ?=\1'$old_stan_dir'\2|g' makefile  
+git add makefile
+
+## change src/docs
+sed -i '' 's|\(.*\)../stan_'$stan_version'/\(.*\)|\1../'$old_stan_dir'/\2|g' $(grep -rl "../stan_$stan_version/" src/docs --include \*.tex)
+git add src/docs
+git commit -m "moving stan_$stan_version to stan"
+
+
+git submodule init
+git submodule update --recursive
+
+pushd stan > /dev/null
+git checkout develop
+git pull --ff
+popd > /dev/null
+
+git add stan
+git commit -m "fixes #$github_number. moving stan library back to ./stan/"
+
+git push origin feature/issue-$github_number-remove-documentation-move-stan
 
 popd > /dev/null
 
@@ -352,7 +397,7 @@ print_step 14
 _msg="Pull request to remove documentation"
 pushd $cmdstan_directory > /dev/null
 
-create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation" "develop" "[skip ci]\n\n#### Summary:\n\nRemoves built documentation.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone."
+create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation-move-stan" "develop" "[skip ci]\n\n#### Summary:\n\nRemoves built documentation and moves stan library.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag; also moves the stan library.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone."
 
 popd > /dev/null
 
