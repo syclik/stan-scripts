@@ -224,7 +224,7 @@ print_step 3
 _msg="Updating version numbers"
 pushd $cmdstan_directory > /dev/null
 
-replace_version $(grep -rlF "$old_version" src)
+replace_version $(grep -rlF "$old_version" src make makefile)
 git commit -m "release/v$version: updating version numbers" -a
 
 popd > /dev/null
