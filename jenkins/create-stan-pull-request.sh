@@ -37,7 +37,7 @@ echo ""
 original_commit_hash=$(cd lib/stan_math && git rev-parse --short HEAD)
 math_commit_hash=$(cd lib/stan_math && git rev-parse --short origin/develop)
 
-if ${original_commit_hash} == ${math_commit_hash}; then
+if "${original_commit_hash}" == "${math_commit_hash}"; then
   echo "------------------------------------------------------------"
   echo ""
   echo " No need to create issue. "
@@ -88,7 +88,7 @@ pushd lib/stan_math > /dev/null
 git checkout ${math_commit_hash}
 popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${math_commit_hash}. [skip ci]" lib/stan_math
-git push
+git push origin feature/issue-${github_issue_number}-update-math
 
 ########################################
 ## Crate pull request
