@@ -37,7 +37,7 @@ echo ""
 original_commit_hash=$(cd lib/stan_math && git rev-parse --short HEAD)
 math_commit_hash=$(cd lib/stan_math && git rev-parse --short origin/develop)
 
-if "${original_commit_hash}" == "${math_commit_hash}"; then
+if [ "$original_commit_hash" == "$math_commit_hash" ]; then
   echo "------------------------------------------------------------"
   echo ""
   echo " No need to create issue. "
