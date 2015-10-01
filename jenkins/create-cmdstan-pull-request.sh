@@ -92,7 +92,7 @@ pushd stan > /dev/null
 git checkout ${stan_commit_hash}
 popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}. [skip ci]" stan
-git push origin
+git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
 ########################################
 ## Crate pull request
