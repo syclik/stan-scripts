@@ -40,7 +40,7 @@ make stan-revert
 original_commit_hash=$(cd stan && git rev-parse --short HEAD)
 stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
 
-if [ "$original_commit_hash" == "$stan_commit_hash"]; then
+if [ "$original_commit_hash" == "$stan_commit_hash" ]; then
   echo "------------------------------------------------------------"
   echo ""
   echo "  No need to create issue. "
