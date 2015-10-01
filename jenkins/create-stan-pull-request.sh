@@ -49,32 +49,32 @@ if "${original_commit_hash}" == "${math_commit_hash}"; then
   exit 0
 fi
 
-########################################
-## Create GitHub issue
-########################################
+# ########################################
+# ## Create GitHub issue
+# ########################################
 
-issue="{ 
-  \"title\": \"Update submodule for the Stan Math Library\",
-  \"body\":  \"The Stan Math Library develop branch has been updated.\nUpdate the submodule to ${math_commit_hash}.\" }"
+# issue="{ 
+#   \"title\": \"Update submodule for the Stan Math Library\",
+#   \"body\":  \"The Stan Math Library develop branch has been updated.\nUpdate the submodule to ${math_commit_hash}.\" }"
 
-response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/stan/issues)
-
-
-if ! curl_success "${response}"; then
-  _msg="
-Error creating pull request:
-----------------------------
-$data
+# response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/stan/issues)
 
 
-Response:
----------
-$response
-"
-  exit 1
-fi
+# if ! curl_success "${response}"; then
+#   _msg="
+# Error creating pull request:
+# ----------------------------
+# $data
 
-parse_github_issue_number "${response}"
+
+# Response:
+# ---------
+# $response
+# "
+#   exit 1
+# fi
+
+# parse_github_issue_number "${response}"
 
 
 ########################################
@@ -83,12 +83,13 @@ parse_github_issue_number "${response}"
 ## - Update the Math Library to develop
 ## - Commit and push
 ########################################
+github_issue_number=1625
 git checkout -b feature/issue-${github_issue_number}-update-math
 pushd lib/stan_math > /dev/null
 git checkout ${math_commit_hash}
 popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${math_commit_hash}. [skip ci]" lib/stan_math
-git push origin feature/issue-${github_issue_number}-update-math
+git push origin
 
 ########################################
 ## Crate pull request
