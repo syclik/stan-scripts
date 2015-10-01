@@ -84,7 +84,9 @@ parse_github_issue_number "${response}"
 ## - Commit and push
 ########################################
 git checkout -b feature/issue-${github_issue_number}-update-math
-make math-update/${math_commit_hash}
+pushd lib/stan_math > /dev/null
+git checkout ${math_commit_hash}
+popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${math_commit_hash}. [skip ci]" lib/stan_math
 git push
 

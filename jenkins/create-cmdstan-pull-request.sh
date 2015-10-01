@@ -85,7 +85,9 @@ parse_github_issue_number "${response}"
 ## - Commit and push
 ########################################
 git checkout -b feature/issue-${github_issue_number}-update-stan
-make stan-update/${stan_commit_hash}
+pushd stan > /dev/null
+git checkout ${stan_commit_hash}
+popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}. [skip ci]" stan
 git push
 
