@@ -35,14 +35,17 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+make stan-revert
+
 original_commit_hash=$(cd stan && git rev-parse --short HEAD)
 stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
 
 if [ "$original_commit_hash" == "$stan_commit_hash"]; then
   echo "------------------------------------------------------------"
   echo ""
-  echo " No need to create issue. "
-  echo " Submodule already at: ${stan_commit_hash}."
+  echo "  No need to create issue. "
+  echo "  Submodule at: ${original_commit_hash}."
+  echo "  Update to:    ${stan_commit_hash}."
   echo ""
   echo "------------------------------------------------------------"
   echo ""
@@ -125,7 +128,7 @@ trap : 0
 
 echo "------------------------------------------------------------"
 echo ""
-echo "Success creating a pull request updating submodule"
+echo "  Success creating a pull request updating submodule"
 echo ""
 echo "------------------------------------------------------------"
 echo ""

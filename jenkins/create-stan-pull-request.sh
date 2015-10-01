@@ -34,15 +34,17 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+make math-revert
+
 original_commit_hash=$(cd lib/stan_math && git rev-parse --short HEAD)
 math_commit_hash=$(cd lib/stan_math && git rev-parse --short origin/develop)
 
 if [ "$original_commit_hash"=="$math_commit_hash" ]; then
   echo "------------------------------------------------------------"
   echo ""
-  echo " No need to create issue. "
-  echo " Submodule at: ${original_commit_hash}."
-  echo " Update to:    ${math_commit_hash}."
+  echo "  No need to create issue. "
+  echo "  Submodule at: ${original_commit_hash}."
+  echo "  Update to:    ${math_commit_hash}."
   echo ""
   echo "------------------------------------------------------------"
   echo ""
@@ -118,19 +120,19 @@ $response
   exit 1
 fi
 
-  ########################################
-  ## Done
-  ########################################
+########################################
+## Done
+########################################
 
-  trap : 0 
-  
-  echo "------------------------------------------------------------"
-  echo ""
-  echo "Success creating a pull request updating submodule"
-  echo ""
-  echo "------------------------------------------------------------"
-  echo ""
+trap : 0 
 
-  exit 0
+echo "------------------------------------------------------------"
+echo ""
+echo "  Success creating a pull request updating submodule"
+echo ""
+echo "------------------------------------------------------------"
+echo ""
+
+exit 0
 
 
