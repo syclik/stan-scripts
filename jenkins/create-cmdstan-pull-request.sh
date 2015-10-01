@@ -32,10 +32,28 @@ echo "  Creating a pull request on CmdStan to update its submodule"
 echo ""
 
 ########################################
+## Check to see if it's been updated
+########################################
+
+original_commit_hash=$(cd stan && git rev-parse --short HEAD)
+stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
+
+if ${original_commit_hash} == ${stan_commit_hash}; then
+  echo "------------------------------------------------------------"
+  echo ""
+  echo " No need to create issue. "
+  echo " Submodule already at: ${stan_commit_hash}."
+  echo ""
+  echo "------------------------------------------------------------"
+  echo ""
+
+  exit 0
+fi
+
+########################################
 ## Create GitHub issue
 ########################################
 
-stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
 issue="{ 
   \"title\": \"Update submodule for the Stan Library\",
   \"body\":  \"The Stan Library develop branch has been updated.\nUpdate the submodule to ${stan_commit_hash}.\" }"
