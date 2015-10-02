@@ -92,14 +92,7 @@ pushd lib/stan_math > /dev/null
 git checkout ${math_commit_hash}
 popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${math_commit_hash}. [skip ci]" lib/stan_math
-/usr/bin/expect  <<EOD
-spawn git push --set-upstream origin feature/issue-${github_issue_number}-update-math
-expect "Username"
-send "${github_user}\n"
-expect "Password"
-send ${github_token}\n"
-
-EOD
+git push --set-upstream origin feature/issue-${github_issue_number}-update-math
 
 
 ########################################
