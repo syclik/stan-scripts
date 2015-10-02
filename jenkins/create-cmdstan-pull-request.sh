@@ -4,8 +4,6 @@ trap 'abort' 0
 
 set -e
 
-trap : 0
-
 ########################################
 ## Functions
 ########################################
@@ -91,7 +89,7 @@ git checkout -b feature/issue-${github_issue_number}-update-stan
 pushd stan > /dev/null
 git checkout ${stan_commit_hash}
 popd > /dev/null
-git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}. [skip ci]" stan
+git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}." stan
 git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
 ########################################
