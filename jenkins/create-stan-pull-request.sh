@@ -86,7 +86,6 @@ parse_github_issue_number "${response}"
 ## - Update the Math Library to develop
 ## - Commit and push
 ########################################
-github_issue_number=1625
 git checkout -b feature/issue-${github_issue_number}-update-math
 pushd lib/stan_math > /dev/null
 git checkout ${math_commit_hash}
