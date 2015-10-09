@@ -34,7 +34,11 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+git pull origin
 make math-revert
+pushd lib/stan_math > /dev/null
+git pull origin
+popd /dev/null
 
 original_commit_hash=$(cd lib/stan_math && git rev-parse --short HEAD)
 math_commit_hash=$(cd lib/stan_math && git rev-parse --short origin/develop)

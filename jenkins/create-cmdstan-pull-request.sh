@@ -33,7 +33,11 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+git pull origin
 make stan-revert
+pushd stan > /dev/null
+git pull origin
+popd /dev/null
 
 original_commit_hash=$(cd stan && git rev-parse --short HEAD)
 stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
