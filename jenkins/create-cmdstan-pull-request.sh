@@ -36,12 +36,16 @@ echo ""
 git checkout develop
 git pull origin
 make stan-revert
-pushd stan > /dev/null
-git pull origin
-popd /dev/null
+# pushd stan > /dev/null
+# git checkout develop
+# git pull origin
+# make math-revert
+# popd > /dev/null
+# make stan-revert
 
 original_commit_hash=$(cd stan && git rev-parse --short HEAD)
 stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
+
 
 if [ "$original_commit_hash" == "$stan_commit_hash" ]; then
   echo "------------------------------------------------------------"
@@ -98,7 +102,7 @@ git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${st
 git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
 ########################################
-## Crate pull request
+## Create pull request
 ########################################
 
 pull_request="{
