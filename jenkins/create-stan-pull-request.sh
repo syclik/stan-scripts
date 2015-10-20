@@ -34,6 +34,7 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+git checkout develop
 git pull origin
 make math-revert
 pushd lib/stan_math > /dev/null

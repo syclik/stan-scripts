@@ -33,6 +33,7 @@ echo ""
 ## Check to see if it's been updated
 ########################################
 
+git checkout develop
 git pull origin
 make stan-revert
 pushd stan > /dev/null
