@@ -36,12 +36,12 @@ echo ""
 git checkout develop
 git pull origin
 make stan-revert
-# pushd stan > /dev/null
-# git checkout develop
-# git pull origin
-# make math-revert
-# popd > /dev/null
-# make stan-revert
+pushd stan > /dev/null
+git checkout develop
+git pull origin
+make math-revert
+popd > /dev/null
+make stan-revert
 
 original_commit_hash=$(cd stan && git rev-parse --short HEAD)
 stan_commit_hash=$(cd stan && git rev-parse --short origin/develop)
