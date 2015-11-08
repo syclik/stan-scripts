@@ -38,6 +38,7 @@ git checkout develop
 git pull origin
 make math-revert
 pushd lib/stan_math > /dev/null
+git checkout develop
 git pull origin
 popd /dev/null
 
