@@ -269,7 +269,7 @@ pushd $cmdstan_directory > /dev/null
 
 wait_for_input "Creating the pull request "
 
-create_pull_request "release/v$version" "release/v$version" "develop" "[skip ci]\n\n#### Summary:\n\nUpdates version numbers to v$version.\n\n#### Intended Effect:\n\nThe \`develop\` branch should be tagged as \`v$version\` after this is merged.\n\n#### How to Verify:\n\nInspect the code.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nDocumentation is included.\n\n#### Reviewer Suggestions: \n\nNone."
+create_pull_request "release/v$version" "release/v$version" "develop" "#### Summary:\n\nUpdates version numbers to v$version.\n\n#### Intended Effect:\n\nThe \`develop\` branch should be tagged as \`v$version\` after this is merged.\n\n#### How to Verify:\n\nInspect the code.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nDocumentation is included.\n\n#### Reviewer Suggestions: \n\nNone."
 
 echo "Created pull request: $github_number"
 
@@ -397,7 +397,7 @@ print_step 14
 _msg="Pull request to remove documentation"
 pushd $cmdstan_directory > /dev/null
 
-create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation-move-stan" "develop" "[skip ci]\n\n#### Summary:\n\nRemoves built documentation and moves stan library.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag; also moves the stan library.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone."
+create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation-move-stan" "develop" "#### Summary:\n\nRemoves built documentation and moves stan library.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag; also moves the stan library.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone.\n\n"
 
 popd > /dev/null
 

@@ -247,7 +247,7 @@ _msg="Committing changed files to local git repository"
 pushd $stan_directory > /dev/null
 
 
-git commit -m "release/v$version: updating version numbers. [skip ci]" -a
+git commit -m "release/v$version: updating version numbers." -a
 
 popd > /dev/null
 
@@ -272,7 +272,7 @@ _msg="Committing built documentation"
 pushd $stan_directory > /dev/null
 
 git add -f doc
-git commit -m "release/v$version: adding built documentation. [skip ci]"
+git commit -m "release/v$version: adding built documentation."
 
 popd > /dev/null
 
@@ -393,7 +393,7 @@ git checkout develop
 git pull --ff
 git checkout -b feature/issue-$github_number-remove-documentation-move-math
 git rm -rf doc
-git commit -m "Removing built documentation. [skip ci]"
+git commit -m "Removing built documentation."
 
 git mv lib/stan_math_$math_version lib/stan_math
 sed -i '' 's|\(.*\)lib/stan_math_'$math_version'|\1'$old_math_dir'|g' makefile

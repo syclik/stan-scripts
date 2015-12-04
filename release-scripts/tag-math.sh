@@ -261,7 +261,7 @@ pushd $math_directory > /dev/null
 
 wait_for_input "Creating the pull request "
 
-create_pull_request "release/v$version" "release/v$version" "develop" "#### Summary:\n\nUpdates version numbers to v$version.\n\n#### Intended Effect:\n\nThe \`develop\` branch should be tagged as \`v$version\` after this is merged.\n\n#### How to Verify:\n\nInspect the code.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nDocumentation is included.\n\n#### Reviewer Suggestions: \n\nNone."
+create_pull_request "release/v$version" "release/v$version" "develop" "#### Summary:\n\nUpdates version numbers to v$version.\n\n#### Intended Effect:\n\nThe \`develop\` branch should be tagged as \`v$version\` after this is merged.\n\n#### How to Verify:\n\nInspect the code.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nDocumentation is included.\n\n#### Reviewer Suggestions: \n\nNone.\n\n[skip ci]"
 
 popd > /dev/null
 
@@ -345,7 +345,7 @@ print_step 14
 _msg="Pull request to remove documentation"
 pushd $math_directory > /dev/null
 
-create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation" "develop" "#### Summary:\n\nRemoves built documentation.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone."
+create_pull_request "Remove v$version documentation" "feature/issue-$github_number-remove-documentation" "develop" "#### Summary:\n\nRemoves built documentation.\n\n#### Intended Effect:\n\nRemoves built documentation included as part of the \`v$version\` tag.\n\n#### How to Verify:\n\nInspect.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone.\n\n[skip ci]"
 
 popd > /dev/null
 
