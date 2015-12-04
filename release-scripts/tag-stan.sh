@@ -396,6 +396,7 @@ git rm -rf doc
 git commit -m "Removing built documentation. [skip ci]"
 
 git mv lib/stan_math_$math_version lib/stan_math
+sed -i '' 's|\(.*\)lib/stan_math_'$math_version'|\1'$old_math_dir'|g' makefile
 
 pushd lib/stan_math > /dev/null
 git checkout develop
