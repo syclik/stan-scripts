@@ -366,7 +366,8 @@ git commit -m "Removing built documentation"
 rm -rf stan_$stan_version
 git checkout -- stan_$stan_version
 git mv stan_$stan_version $old_stan_dir 
-sed -i '' 's|STAN ?=\(.*\)stan_'$stan_version'\(.*\)|STAN ?=\1'$old_stan_dir'\2|g' makefile  
+sed -i '' 's|STAN ?=\(.*\)stan_'$stan_version'\(.*\)|STAN ?=\1'$old_stan_dir'\2|g' makefile
+sed -i '' 's|MATH ?=\(.*\)stan_math_'$math_version'/|MATH ?=\1stan_math/|g' makefile
 git add makefile
 
 ## change src/docs
