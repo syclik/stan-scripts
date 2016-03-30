@@ -74,7 +74,7 @@ if curl_success "${response}"; then
 
   parse_existing_github_issue_and_pr_numbers "${response}"
   
-elif
+else
   ########################################
   ## Create GitHub issue
   ########################################
@@ -111,7 +111,7 @@ fi
 if [ -n "$github_pr_number"]; then  
   git checkout feature/issue-${github_issue_number}-update-stan
   git pull --ff
-elif
+else
   git checkout -b feature/issue-${github_issue_number}-update-stan
 fi
 pushd stan > /dev/null
@@ -145,7 +145,7 @@ $response
     exit 1
   fi
 
-elif
+else
   ########################################
   ## Create pull request
   ########################################
