@@ -109,7 +109,12 @@ fi
 ## - Update the Math Library to develop
 ## - Commit and push
 ########################################
-git checkout -b feature/issue-${github_issue_number}-update-math
+if [ -n "$github_pr_number"]; then  
+  git checkout feature/issue-${github_issue_number}-update-math
+  git pull --ff
+elif
+  git checkout -b feature/issue-${github_issue_number}-update-math
+fi
 pushd lib/stan_math > /dev/null
 git checkout ${math_commit_hash}
 popd > /dev/null

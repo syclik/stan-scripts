@@ -107,8 +107,13 @@ fi
 ## - Create a git branch
 ## - Update the Stan Library to develop
 ## - Commit and push
-########################################
-git checkout -b feature/issue-${github_issue_number}-update-stan
+  ########################################
+if [ -n "$github_pr_number"]; then  
+  git checkout feature/issue-${github_issue_number}-update-stan
+  git pull --ff
+elif
+  git checkout -b feature/issue-${github_issue_number}-update-stan
+fi
 pushd stan > /dev/null
 git checkout ${stan_commit_hash}
 popd > /dev/null
