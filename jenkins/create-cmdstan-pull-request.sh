@@ -10,7 +10,7 @@ set -e
 
 curl_success() {
   code=$(sed -n "s,.*HTTP/1.1 \([0-9]\{3\}\).*,\1,p" <<< "$1")
-  [[ "$code" -eq "201" ]] || [ "$code" -eq "200" ]
+  [[ "$code" -eq "201" ]] || [[ "$code" -eq "200" ]]
 }
 
 parse_github_issue_number() {
