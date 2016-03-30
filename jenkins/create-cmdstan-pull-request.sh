@@ -17,6 +17,11 @@ parse_github_issue_number() {
   github_issue_number=$(sed -n "s,.*\"number\":[[:space:]]*\([0-9]*\).*,\1,p" <<< "$1")
 }
 
+parse_existing_github_issue_and_pr_numbers() {
+  numbers=($(echo "$1" | grep -o '"number": [0-9]*' | sed 's|"number": \([0-9]*\)|\1|g'))
+  github_pr_number=${numbers[0]}
+  github_issue_number=${numbers[1]}
+}
 
 ########################################
 ## Echo
@@ -60,19 +65,29 @@ if [ "$original_commit_hash" == "$stan_commit_hash" ]; then
   exit 0
 fi
 
-########################################
-## Create GitHub issue
-########################################
+response=$(eval curl -G 'https://api.github.com/repos/stan-dev/cmdstan/issues?creator=stan-buildbot')
 
-issue="{ 
+if curl_success "${response}"; then
+  ########################################
+  ## Update existing GitHub issue
+  ########################################
+
+  parse_existing_github_issue_and_pr_numbers "${response}"
+  
+elif
+  ########################################
+  ## Create GitHub issue
+  ########################################
+
+  issue="{ 
   \"title\": \"Update submodule for the Stan Library\",
   \"body\":  \"The Stan Library develop branch has been updated.\nUpdate the submodule to ${stan_commit_hash}.\" }"
 
-response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/cmdstan/issues)
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/cmdstan/issues)
 
 
-if ! curl_success "${response}"; then
-  _msg="
+  if ! curl_success "${response}"; then
+    _msg="
 Error creating pull request:
 ----------------------------
 $data
@@ -82,11 +97,10 @@ Response:
 ---------
 $response
 "
-  exit 1
+    exit 1
+  fi
+  parse_github_issue_number "${response}"
 fi
-
-parse_github_issue_number "${response}"
-
 
 ########################################
 ## Fix issue on a branch:
@@ -101,20 +115,46 @@ popd > /dev/null
 git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}." stan
 git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
-########################################
-## Create pull request
-########################################
 
-pull_request="{
+if [ -n "$github_pr_number"]; then
+  ########################################
+  ## Update pull request with comment
+  ########################################
+
+  comment="{
+\"body\": \"Update the Stan submodule to the current develop version, ${stan_commit_hash}.\"
+}"
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$comment\' https://api.github.com/repos/stan-dev/cmdstan/issues/$github_pr_number/comments)
+
+  if ! curl_success "${response}"; then
+    _msg="
+Error adding comment to pull request ${github_pr_number}
+----------------------------
+$data
+
+
+Response:
+---------
+$response
+"
+    exit 1
+  fi
+
+elif
+  ########################################
+  ## Create pull request
+  ########################################
+
+  pull_request="{
   \"title\": \"Update submodule for the Stan Library\",
   \"head\": \"feature/issue-${github_issue_number}-update-stan\",
   \"base\": \"develop\",
   \"body\": \"#### Summary:\n\nUpdates the Stan submodule to the current develop version, ${stan_commit_hash}.\n\n#### Intended Effect:\n\nThe Stan Library \`develop\` branch has been updated.\nThis pull request updates the submodule for the Stan Library submodule to ${stan_commit_hash}.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone.\" }"
 
-response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$pull_request\' https://api.github.com/repos/stan-dev/cmdstan/pulls)
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$pull_request\' https://api.github.com/repos/stan-dev/cmdstan/pulls)
 
-if ! curl_success "${response}"; then
-  _msg="
+  if ! curl_success "${response}"; then
+    _msg="
 Error creating pull request
 ----------------------------
 $data
@@ -124,7 +164,9 @@ Response:
 ---------
 $response
 "
-  exit 1
+    exit 1
+  fi
+
 fi
 ########################################
 ## Done

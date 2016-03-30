@@ -11,11 +11,17 @@ set -e
 
 curl_success() {
   code=$(sed -n "s,.*HTTP/1.1 \([0-9]\{3\}\).*,\1,p" <<< "$1")
-  [[ "$code" -eq "201" ]] || [ "$code" -eq "200" ]
+  [[ "$code" -eq "201" ]] || [[ "$code" -eq "200" ]]
 }
 
 parse_github_issue_number() {
   github_issue_number=$(sed -n "s,.*\"number\":[[:space:]]*\([0-9]*\).*,\1,p" <<< "$1")
+}
+
+parse_existing_github_issue_and_pr_numbers() {
+  numbers=($(echo "$1" | grep -o '"number": [0-9]*' | sed 's|"number": \([0-9]*\)|\1|g'))
+  github_pr_number=${numbers[0]}
+  github_issue_number=${numbers[1]}
 }
 
 
@@ -59,19 +65,30 @@ if [ "$original_commit_hash" == "$math_commit_hash" ]; then
   exit 0
 fi
 
-########################################
-## Create GitHub issue
-########################################
 
-issue="{ 
+response=$(eval curl -G 'https://api.github.com/repos/stan-dev/stan/issues?creator=stan-buildbot')
+
+if curl_success "${response}"; then
+  ########################################
+  ## Update existing GitHub issue
+  ########################################
+
+  parse_existing_github_issue_and_pr_numbers "${response}"
+
+elif
+  ########################################
+  ## Create GitHub issue
+  ########################################
+
+  issue="{ 
   \"title\": \"Update submodule for the Stan Math Library\",
   \"body\":  \"The Stan Math Library develop branch has been updated.\nUpdate the submodule to ${math_commit_hash}.\" }"
 
-response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/stan/issues)
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$issue\' https://api.github.com/repos/stan-dev/stan/issues)
 
 
-if ! curl_success "${response}"; then
-  _msg="
+  if ! curl_success "${response}"; then
+    _msg="
 Error creating pull request:
 ----------------------------
 $data
@@ -81,11 +98,10 @@ Response:
 ---------
 $response
 "
-  exit 1
+    exit 1
+  fi
+  parse_github_issue_number "${response}"
 fi
-
-parse_github_issue_number "${response}"
-
 
 ########################################
 ## Fix issue on a branch:
@@ -101,20 +117,45 @@ git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${ma
 git push --set-upstream origin feature/issue-${github_issue_number}-update-math
 
 
-########################################
-## Crate pull request
-########################################
+if [ -n "$github_pr_number"]; then
+  ########################################
+  ## Update pull request with comment
+  ########################################
 
-pull_request="{
+  comment="{
+\"body\": \"Update the Math submodule to the current develop version, ${math_commit_hash}.\"
+}"
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$comment\' https://api.github.com/repos/stan-dev/stan/issues/$github_pr_number/comments)
+
+  if ! curl_success "${response}"; then
+    _msg="
+Error adding comment to pull request ${github_pr_number}
+----------------------------
+$data
+
+
+Response:
+---------
+$response
+"
+    exit 1
+  fi
+  
+elif
+  ########################################
+  ## Create pull request
+  ########################################
+
+  pull_request="{
   \"title\": \"Update submodule for the Stan Math Library\",
   \"head\": \"feature/issue-${github_issue_number}-update-math\",
   \"base\": \"develop\",
   \"body\": \"#### Summary:\n\nUpdates the Math submodule to the current develop version, ${math_commit_hash}.\n\n#### Intended Effect:\n\nThe Stan Math Library \`develop\` branch has been updated.\nThis pull request updates the submodule for the Stan Math Library submodule to ${math_commit_hash}.\n\n#### Side Effects:\n\nNone.\n\n#### Documentation:\n\nNone.\n\n#### Reviewer Suggestions: \n\nNone.\" }"
 
-response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$pull_request\' https://api.github.com/repos/stan-dev/stan/pulls)
+  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$pull_request\' https://api.github.com/repos/stan-dev/stan/pulls)
 
-if ! curl_success "${response}"; then
-  _msg="
+  if ! curl_success "${response}"; then
+    _msg="
 Error creating pull request
 ----------------------------
 $data
@@ -124,9 +165,10 @@ Response:
 ---------
 $response
 "
-  exit 1
-fi
+    exit 1
+  fi
 
+fi
 ########################################
 ## Done
 ########################################
