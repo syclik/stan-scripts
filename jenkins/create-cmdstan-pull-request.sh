@@ -115,8 +115,7 @@ else
   git checkout -b feature/issue-${github_issue_number}-update-stan
 fi
 pushd stan > /dev/null
-git checkout develop
-git pull origin
+git checkout ${stan_commit_hash}
 popd > /dev/null
 git add stan
 git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${stan_commit_hash}." stan
