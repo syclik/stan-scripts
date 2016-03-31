@@ -97,6 +97,7 @@ Response:
 ---------
 $response
 "
+    trap : 0 
     exit 1
   fi
   parse_github_issue_number "${response}"
@@ -107,8 +108,8 @@ fi
 ## - Create a git branch
 ## - Update the Stan Library to develop
 ## - Commit and push
-  ########################################
-if [ -n "$github_pr_number"]; then  
+########################################
+if [ ! -z "$github_pr_number" ]; then  
   git checkout feature/issue-${github_issue_number}-update-stan
   git pull --ff
 else
@@ -122,7 +123,7 @@ git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${st
 git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
 
-if [ -n "$github_pr_number"]; then
+if [ ! -z "$github_pr_number" ]; then
   ########################################
   ## Update pull request with comment
   ########################################
@@ -143,6 +144,7 @@ Response:
 ---------
 $response
 "
+    trap : 0 
     exit 1
   fi
 
@@ -170,6 +172,7 @@ Response:
 ---------
 $response
 "
+    trap : 0 
     exit 1
   fi
 
