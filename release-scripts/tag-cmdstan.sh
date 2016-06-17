@@ -252,6 +252,8 @@ print_step 6
 _msg="Pushing changes to github"
 pushd $cmdstan_directory > /dev/null
 
+wait_for_input "Ready to push branch "
+
 ### FIXME: Add testing code here
 git push origin release/v$version
 

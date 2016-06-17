@@ -284,6 +284,8 @@ print_step 8
 _msg="Pushing changes to github"
 pushd $stan_directory > /dev/null
 
+wait_for_input "Ready to push branch "
+
 ### FIXME: Add testing code here
 git push origin release/v$version
 
