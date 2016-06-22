@@ -188,7 +188,8 @@ old_stan_dir=stan
 if [[ $old_stan_dir != stan_$stan_version ]]; then
   git mv $old_stan_dir stan_$stan_version
   sed -i '' 's|STAN ?=\(.*\)'$old_stan_dir'|STAN ?=\1stan_'$stan_version'|g' makefile  
-  git add makefile
+  sed -i '' 's|\(.*\) stan/|\1 stan_'$stan_version'/|g' test-all.sh
+  git add makefile test-all.sh
   git commit -m "moving stan to stan_$stan_version"
 fi
 
@@ -203,8 +204,9 @@ git checkout v$stan_version
 popd > /dev/null
 
 math_version=$(grep stan_math stan_$stan_version/makefile | sed 's|\(.*\)stan_math\(.*\)/|\2|g')
-sed -i '' 's|MATH ?=\(.*\)stan_math/|MATH ?=\1stan_math'$math_version'/|g' makefile
-git add makefile
+sed -i '' 's|MATH ?=\(.*\)stan_math/|MATH ?=\1stan_math_'$math_version'/|g' makefile
+sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math_'$math_version'/|g' test-all.sh
+git add makefile test-all.sh
 git commit -m "Updating stan math location"
 
 ## update references for src/docs
@@ -370,7 +372,9 @@ git checkout -- stan_$stan_version
 git mv stan_$stan_version $old_stan_dir 
 sed -i '' 's|STAN ?=\(.*\)stan_'$stan_version'\(.*\)|STAN ?=\1'$old_stan_dir'\2|g' makefile
 sed -i '' 's|MATH ?=\(.*\)stan_math_'$math_version'/|MATH ?=\1stan_math/|g' makefile
-git add makefile
+sed -i '' 's|\(.*\) stan_'$stan_version'/|\1 stan/|g' test-all.sh
+sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math_'$math_version'/|g' test-all.sh
+git add makefile test-all.sh
 
 ## change src/docs
 sed -i '' 's|\(.*\)../stan_'$stan_version'/\(.*\)|\1../'$old_stan_dir'/\2|g' $(grep -rl "../stan_$stan_version/" src/docs --include \*.tex)
