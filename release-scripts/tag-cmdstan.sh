@@ -193,13 +193,15 @@ if [[ $old_stan_dir != stan_$stan_version ]]; then
   git commit -m "moving stan to stan_$stan_version"
 fi
 
-## update submodules after git mv due to submodule issue
 git submodule init
-git submodule update --recursive
+git submodule update
 
 pushd stan_$stan_version > /dev/null
 
 git checkout v$stan_version
+
+git submodule init
+git submodule update
 
 popd > /dev/null
 
@@ -372,9 +374,9 @@ rm -rf stan_$stan_version
 git checkout -- stan_$stan_version
 git mv stan_$stan_version $old_stan_dir 
 sed -i '' 's|STAN ?=\(.*\)stan_'$stan_version'\(.*\)|STAN ?=\1'$old_stan_dir'\2|g' makefile
-sed -i '' 's|MATH ?=\(.*\)stan_math_'$math_version'/|MATH ?=\1stan_math/|g' makefile
+sed -i '' 's|MATH ?=\(.*\)stan_math'$math_version'/|MATH ?=\1stan_math/|g' makefile
 sed -i '' 's|\(.*\) stan_'$stan_version'/|\1 stan/|g' test-all.sh
-sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math_'$math_version'/|g' test-all.sh
+sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math'$math_version'/|g' test-all.sh
 git add makefile test-all.sh
 
 ## change src/docs
