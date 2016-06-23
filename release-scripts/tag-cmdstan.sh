@@ -204,13 +204,14 @@ git checkout v$stan_version
 popd > /dev/null
 
 math_version=$(grep stan_math stan_$stan_version/makefile | sed 's|\(.*\)stan_math\(.*\)/|\2|g')
-sed -i '' 's|MATH ?=\(.*\)stan_math/|MATH ?=\1stan_math_'$math_version'/|g' makefile
-sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math_'$math_version'/|g' test-all.sh
+sed -i '' 's|MATH ?=\(.*\)stan_math/|MATH ?=\1stan_math'$math_version'/|g' makefile
+sed -i '' 's|\(.*\)/lib/stan_math/|\1/lib/stan_math'$math_version'/|g' test-all.sh
 git add makefile test-all.sh
 git commit -m "Updating stan math location"
 
 ## update references for src/docs
 sed -i '' 's|\(.*\)../'$old_stan_dir'/\(.*\)|\1../stan_'$stan_version'/\2|g' $(grep -rl "../stan/" src/docs --include \*.tex)
+sed -i '' 's|\(.*\)../stan_math_'$old_version'/\(.*\)|\1../stan_math'$math_version'/\2|g' $(grep -rl "../stan_math_$old_version/" src/docs --include \*.tex)
 git add src/docs
 
 git add stan_$stan_version
