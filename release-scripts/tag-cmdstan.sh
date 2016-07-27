@@ -230,6 +230,7 @@ _msg="Updating version numbers"
 pushd $cmdstan_directory > /dev/null
 
 replace_version $(grep -rlF "$old_version" src make makefile)
+replace_version .github/ISSUE_TEMPLATE.md
 git commit -m "release/v$version: updating version numbers" -a
 
 popd > /dev/null

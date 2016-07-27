@@ -195,6 +195,7 @@ fi
 
 replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" ${math_directory}/stan)
 replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" ${math_directory}/doxygen)
+replace_version .github/ISSUE_TEMPLATE.md
 
 popd > /dev/null
 

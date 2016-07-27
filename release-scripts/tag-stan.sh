@@ -234,6 +234,7 @@ if [[ $(read_stan_major_version) != $(major_version $version) \
 fi
 
 replace_version $(grep -rlF --exclude={*.hpp,*.cpp} "$old_version" $stan_directory/src)
+replace_version .github/ISSUE_TEMPLATE.md
 replace_version_test
 
 popd > /dev/null
