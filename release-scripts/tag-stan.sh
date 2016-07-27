@@ -364,10 +364,6 @@ pushd $stan_directory > /dev/null
 
 git pull --ff
 git checkout v$version
-echo "Creating archive: stan-$version.tar.gz"
-git-archive-all stan-$version.tar.gz
-echo "Creating archive: stan-$version.zip"
-git-archive-all stan-$version.zip
 
 popd > /dev/null
 
