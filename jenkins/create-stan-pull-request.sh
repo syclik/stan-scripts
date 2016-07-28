@@ -9,6 +9,10 @@ set -e
 ## Functions
 ########################################
 
+github_issue_exists() {
+  [[ "$1" -ne "[ ]" ]]
+}
+
 curl_success() {
   code=$(sed -n "s,.*HTTP/1.1 \([0-9]\{3\}\).*,\1,p" <<< "$1")
   [[ "$code" -eq "201" ]] || [[ "$code" -eq "200" ]]
@@ -68,7 +72,7 @@ fi
 
 response=$(eval curl -G 'https://api.github.com/repos/stan-dev/stan/issues?creator=stan-buildbot')
 
-if curl_success "${response}"; then
+if github_issue_exists "${response}"; then
   ########################################
   ## Update existing GitHub issue
   ########################################
