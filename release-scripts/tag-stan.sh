@@ -198,7 +198,8 @@ git submodule update --recursive
 old_math_dir=$(find lib -name stan_math*)
 if [[ $old_math_dir != lib/stan_math_$math_version ]]; then
   git mv $old_math_dir lib/stan_math_$math_version
-  sed -i '' 's|\(.*\)'$old_math_dir'|\1lib/stan_math_'$math_version'|g' makefile
+  sed -i '' 's|\(.*\)'$old_math_dir'\(.*\)$|\1lib/stan_math_'$math_version'\2|g' makefile
+  git add makefile
 fi
 
 pushd lib/stan_math_$math_version > /dev/null
@@ -395,7 +396,8 @@ git rm -rf doc
 git commit -m "Removing built documentation."
 
 git mv lib/stan_math_$math_version lib/stan_math
-sed -i '' 's|\(.*\)lib/stan_math_'$math_version'|\1'$old_math_dir'|g' makefile
+sed -i '' 's|\(.*\)lib/stan_math_'$math_version'\(.*\)|\1'$old_math_dir'\2|g' makefile
+git add makefile
 
 pushd lib/stan_math > /dev/null
 git checkout develop
