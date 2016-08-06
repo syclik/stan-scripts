@@ -107,6 +107,16 @@ $response
   parse_github_issue_number "${response}"
 fi
 
+
+echo "Issue        #"${github_issue_number}
+echo "Pull request #"${github_pr_number}
+
+if [ -z "${github_issue_number}" ]; then
+  echo "Can't find an issue number"
+  trap : 0
+  exit 1
+fi
+
 ########################################
 ## Fix issue on a branch:
 ## - Create a git branch
