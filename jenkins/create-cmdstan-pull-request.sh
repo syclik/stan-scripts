@@ -9,7 +9,7 @@ set -e
 ########################################
 
 github_issue_exists() {
-  [[ "$1" != "[ ]" ]]
+  grep -q 'stan-buildbot' <<<$1
 }
 
 curl_success() {
