@@ -137,32 +137,7 @@ git commit -m "Fixes #${github_issue_number}. Updates the Math submodule to ${ma
 git push --set-upstream origin feature/issue-${github_issue_number}-update-math
 
 
-if [ ! -z "$github_pr_number" ]; then
-  ########################################
-  ## Update pull request with comment
-  ########################################
-
-  comment="{
-\"body\": \"Update the Math submodule to the current develop version, ${math_commit_hash}.\"
-}"
-  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$comment\' https://api.github.com/repos/stan-dev/stan/issues/$github_pr_number/comments)
-
-  if ! curl_success "${response}"; then
-    _msg="
-Error adding comment to pull request ${github_pr_number}
-----------------------------
-$data
-
-
-Response:
----------
-$response
-"
-    trap : 0 
-    exit 1
-  fi
-  
-else
+if [ -z "$github_pr_number" ]; then
   ########################################
   ## Create pull request
   ########################################

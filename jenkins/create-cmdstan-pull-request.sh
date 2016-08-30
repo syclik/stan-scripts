@@ -127,32 +127,7 @@ git commit -m "Fixes #${github_issue_number}. Updates the Stan submodule to ${st
 git push --set-upstream origin feature/issue-${github_issue_number}-update-stan
 
 
-if [ ! -z "$github_pr_number" ]; then
-  ########################################
-  ## Update pull request with comment
-  ########################################
-
-  comment="{
-\"body\": \"Update the Stan submodule to the current develop version, ${stan_commit_hash}.\"
-}"
-  response=$(eval curl --include --user \"$github_user:$github_token\" --request POST --data \'$comment\' https://api.github.com/repos/stan-dev/cmdstan/issues/$github_pr_number/comments)
-
-  if ! curl_success "${response}"; then
-    _msg="
-Error adding comment to pull request ${github_pr_number}
-----------------------------
-$data
-
-
-Response:
----------
-$response
-"
-    trap : 0 
-    exit 1
-  fi
-
-else
+if [ -z "$github_pr_number" ]; then
   ########################################
   ## Create pull request
   ########################################
