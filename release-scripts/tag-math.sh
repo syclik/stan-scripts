@@ -133,7 +133,7 @@ if [[ -z $github_user ]]; then
   read -p "  Github user name: " github_user
 fi
 
-## read GitHub user name
+## read GitHub password
 _msg="Reading Github password"
 if [[ -z $github_password ]]; then
   read -s -p "  Github password (user: $github_user): " github_password
