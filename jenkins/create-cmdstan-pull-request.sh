@@ -18,7 +18,7 @@ curl_success() {
 }
 
 parse_github_issue_number() {
-  github_issue_number=$(sed -n "s,.*/issues/\([0-9]*\)\".*,\1,p" <<< "$1")
+  github_issue_number=$(sed -n "s,.*/issues/\([0-9]*\)\".*,\1,p" <<< "$1" | head -n1)
 }
 
 parse_existing_github_issue_and_pr_numbers() {
